@@ -1,15 +1,20 @@
-# 🤟 Sign Language Recognition - Nhận Diện Ngôn Ngữ Ký Hiệu
+# Sign Language Recognition - Nhận Diện Ngôn Ngữ Ký Hiệu
 
-## 📋 Tổng Quan
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![MediaPipe](https://img.shields.io/badge/MediaPipe-%20Hands-success)
+![OpenCV](https://img.shields.io/badge/OpenCV-Real--time-lightgrey)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+## Tổng Quan
 
 Ứng dụng Python nhận diện ngôn ngữ ký hiệu (ASL alphabet) và chuyển đổi thành giọng nói để hỗ trợ giao tiếp cho người khiếm thính.
 
-### 🎯 Mục Tiêu
+### Mục Tiêu
 - Nhận diện các ký hiệu tay (A-Z) qua camera
 - Chuyển đổi thành văn bản
 - Phát ra giọng nói tự nhiên bằng AI
 
-### 🛠️ Tech Stack
+### Công Nghệ Sử Dụng
 - **MediaPipe Hands**: Phát hiện và theo dõi bàn tay (21 landmarks)
 - **OpenCV**: Xử lý video real-time
 - **OpenAI TTS**: Chuyển văn bản thành giọng nói
@@ -18,7 +23,7 @@
 
 ---
 
-## 📁 Cấu Trúc Dự Án
+## Cấu Trúc Dự Án
 
 ```
 School Computer Vision/
@@ -42,11 +47,11 @@ School Computer Vision/
 
 ---
 
-## 🔄 Workflow
+## Quy Trình Xử Lý
 
 ```
 Camera → MediaPipe Hands → Classifier → Speech Buffer → OpenAI TTS
-  🎥         👋 (21 pts)       A-Z        "HELLO"         🔊
+  Camera     Hands (21 pts)    A-Z        "HELLO"         Audio
 ```
 
 **Chi tiết:**
@@ -58,9 +63,9 @@ Camera → MediaPipe Hands → Classifier → Speech Buffer → OpenAI TTS
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
-### 1. Fix Python Version ⚠️ IMPORTANT
+### 1. Phiên Bản Python (Quan trọng)
 **MediaPipe chỉ hỗ trợ Python 3.8 - 3.11**
 
 ```powershell
@@ -84,7 +89,7 @@ copy .env.example .env
 # Edit .env: Thêm OPENAI_API_KEY=your-key-here
 ```
 
-### 4. Test
+### 4. Kiểm Tra
 
 ```powershell
 # Test hand detection
@@ -99,7 +104,7 @@ python src/main.py
 
 ---
 
-## 🎮 Keyboard Controls
+## Phím Tắt
 
 | Key | Action |
 |-----|--------|
@@ -112,14 +117,14 @@ python src/main.py
 
 ---
 
-## 📊 Kế Hoạch 8 Tuần
+## Kế Hoạch 8 Tuần
 
-### Week 1-2: Setup ✅ DONE
+### Week 1-2: Setup (DONE)
 - [x] Project structure
 - [x] Hand detector module
 - [x] Basic modules
 
-### Week 3-4: Data & Training 🔄 CURRENT
+### Week 3-4: Data & Training (CURRENT)
 - [ ] Data collection tool
 - [ ] Collect 100+ samples/letter (A-Z)
 - [ ] Train classifier (target: 85% accuracy)
@@ -142,7 +147,7 @@ python src/main.py
 
 ---
 
-## 💻 Code Examples
+## Ví Dụ Mã Nguồn
 
 ### Hand Detection
 ```python
@@ -179,12 +184,12 @@ print(f"Detected: {gesture} (confidence: {confidence:.2f})")
 from text_to_speech import TextToSpeech
 
 tts = TextToSpeech(api_key="your-key", voice="alloy")
-tts.text_to_speech("Hello World")  # 🔊
+tts.text_to_speech("Hello World")
 ```
 
 ---
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 ### MediaPipe Install Error
 **Problem**: `Could not find mediapipe`  
@@ -216,7 +221,7 @@ CAMERA_HEIGHT=480
 
 ---
 
-## 📦 Dependencies
+## Dependencies
 
 ```txt
 opencv-python>=4.8.0          # Video processing
@@ -232,7 +237,7 @@ loguru>=0.7.0                 # Logging
 
 ---
 
-## 🎯 Success Metrics
+## Success Metrics
 
 | Metric | Target |
 |--------|--------|
@@ -243,7 +248,7 @@ loguru>=0.7.0                 # Logging
 
 ---
 
-## 🔧 Configuration (.env)
+## Configuration (.env)
 
 ```bash
 # OpenAI
@@ -273,7 +278,7 @@ SHOW_FPS=True
 
 ---
 
-## 📚 Learning Resources
+## Tài Liệu Tham Khảo
 
 - [MediaPipe Hands Docs](https://google.github.io/mediapipe/solutions/hands.html)
 - [ASL Alphabet](https://www.startasl.com/american-sign-language-alphabet/)
@@ -282,7 +287,7 @@ SHOW_FPS=True
 
 ---
 
-## 🎯 Next Steps
+## Next Steps
 
 ### This Week
 1. Fix Python version (3.13 → 3.11)
@@ -301,7 +306,7 @@ SHOW_FPS=True
 
 ---
 
-## 📝 Known Issues
+## Known Issues
 
 1. **Python 3.13**: MediaPipe chưa support → Cần 3.11
 2. **No Trained Model**: Cần collect data và train
@@ -310,7 +315,7 @@ SHOW_FPS=True
 
 ---
 
-## 🤝 Contributing
+## Đóng Góp
 
 Improvements welcome:
 - Data collection
@@ -321,12 +326,12 @@ Improvements welcome:
 
 ---
 
-## 📄 License
+## License
 MIT License
 
 ---
 
-## 📞 Support
+## Hỗ Trợ
 
 - Check [MEMORY.md](MEMORY.md) for AI context
 - Review code comments in src/
