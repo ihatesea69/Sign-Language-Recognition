@@ -38,6 +38,9 @@ env/
 # Environment Variables
 .env
 
+# AI Context (personal notes, not for version control)
+MEMORY.md
+
 # OS
 .DS_Store
 Thumbs.db

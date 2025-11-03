@@ -177,11 +177,23 @@ class SignLanguageApp:
         Returns:
             Speech text
         """
+        # Friendly mapping for common gestures/words
+        mapping = {
+            "THUMBS_UP": "Great job",            # Two fingers up (V/PEACE) => say Hello/Hi
+            "PEACE": "Hello",
+            "V": "Hello",
+            "OK": "Okay",
+            "FIVE": "Stop",
+        }
+
+        if gesture in mapping:
+            return mapping[gesture]
+
         # Single letter gestures - spell phonetically
         if len(gesture) == 1 and gesture.isalpha():
             return f"Letter {gesture}"
-        
-        # Replace underscores with spaces and capitalize
+
+        # Default formatting
         return gesture.replace("_", " ").title()
     
     def process_frame(self, img):

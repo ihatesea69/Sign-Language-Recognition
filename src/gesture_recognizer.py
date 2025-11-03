@@ -47,9 +47,11 @@ class SimpleGestureRecognizer:
         
         fingers_up_count = sum(fingers_up)
         
-        # Get angles and distances
+        # Get angles and distances (normalized by palm size for robustness)
         thumb_index_distance = self._get_distance(landmarks[4], landmarks[8])
-        thumb_index_touching = thumb_index_distance < 0.05
+        # Use wrist (0) to middle MCP (9) as palm scale reference
+        palm_scale = max(self._get_distance(landmarks[0], landmarks[9]), 1e-6)
+        thumb_index_touching = (thumb_index_distance / palm_scale) < 0.35
         
         # Recognize gestures
         gesture, confidence = self._match_gesture(
@@ -72,6 +74,13 @@ class SimpleGestureRecognizer:
         """Match gesture based on finger states"""
         thumb_up, index_up, middle_up, ring_up, pinky_up = fingers_up
         
+        # PRIORITY: OK sign (thumb and index forming a circle) should win early
+        # This avoids misclassifying as Y (thumb+pinky up) or O
+        if thumb_index_touching:
+            # If other three fingers mostly up, it's the classic OK; else still accept OK
+            confidence = 0.9 if (middle_up or ring_up or pinky_up) else 0.85
+            return ("OK", confidence)
+
         # FIST - All fingers down
         if fingers_up_count == 0:
             return ("FIST", 0.95)
@@ -103,9 +112,7 @@ class SimpleGestureRecognizer:
         if index_up and fingers_up_count == 1:
             return ("ONE", 0.85)
         
-        # OK SIGN - Thumb and index touching, others up
-        if thumb_index_touching and middle_up and ring_up and pinky_up:
-            return ("OK", 0.8)
+        # (Handled above) OK SIGN
         
         # L SHAPE - Thumb and index up, forming L
         if thumb_up and index_up and fingers_up_count == 2:
@@ -141,9 +148,7 @@ class SimpleGestureRecognizer:
             if self._is_hand_curved(landmarks):
                 return ("C", 0.7)
         
-        # O - Thumb and index forming circle
-        if thumb_index_touching and not middle_up and not ring_up and not pinky_up:
-            return ("O", 0.75)
+        # (Merged into OK) O - treated as OK for demo stability
         
         # Default
         return (f"{fingers_up_count}_FINGERS", 0.5)
