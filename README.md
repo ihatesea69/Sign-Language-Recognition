@@ -1,19 +1,19 @@
 # 🤟 Sign Language Recognition with Text-to-Speech
 
-[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
-[![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-green.svg)](https://opencv.org/)
-[![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10%2B-orange.svg)](https://mediapipe.dev/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.13%2B-FF6F00.svg)](https://www.tensorflow.org/)
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
+[](https://www.python.org/downloads/)
+[](https://opencv.org/)
+[](https://mediapipe.dev/)
+[](https://www.tensorflow.org/)
+[](LICENSE)
+[]()
 
 > **A real-time sign language recognition system with Text-to-Speech output, powered by MediaPipe and Machine Learning**
 
-![Sign Language Recognition Demo](docs/assets/demo.gif)
+
 
 ---
 
-## 📋 Table of Contents
+##  Table of Contents
 
 - [Overview](#-overview)
 - [Features](#-features)
@@ -31,7 +31,7 @@
 
 ---
 
-## 🎯 Overview
+##  Overview
 
 This project implements a **real-time sign language recognition system** that:
 - Detects hand gestures using **MediaPipe Hands**
@@ -39,41 +39,26 @@ This project implements a **real-time sign language recognition system** that:
 - Converts recognized signs to speech using **OpenAI Text-to-Speech API**
 - Provides an interactive interface for seamless communication
 
-### 🎥 Demo
+###  Demo
 
-<table>
-  <tr>
-    <td align="center">
-      <img src="docs/assets/gesture_detection.png" width="300"/><br/>
-      <b>Hand Detection</b>
-    </td>
-    <td align="center">
-      <img src="docs/assets/gesture_recognition.png" width="300"/><br/>
-      <b>Gesture Recognition</b>
-    </td>
-    <td align="center">
-      <img src="docs/assets/text_to_speech.png" width="300"/><br/>
-      <b>Text-to-Speech</b>
-    </td>
-  </tr>
-</table>
+
 
 ---
 
-## ✨ Features
+##  Features
 
-### 🖐️ Hand Detection & Tracking
+###  Hand Detection & Tracking
 - **21 hand landmarks** detection using MediaPipe
 - Real-time tracking with **30 FPS** performance
 - Support for both **left and right hands**
 - Robust detection under various lighting conditions
 
-### 🎭 Gesture Recognition
+###  Gesture Recognition
 #### Rule-Based Recognition
-- ✅ **15-20 static gestures** (A-Z letters, numbers 0-9)
-- ✅ Common signs: OK, Peace, Thumbs Up, Fist, etc.
-- ✅ **Geometric feature extraction** (angles, distances)
-- ✅ **No training required**
+-  **15-20 static gestures** (A-Z letters, numbers 0-9)
+-  Common signs: OK, Peace, Thumbs Up, Fist, etc.
+-  **Geometric feature extraction** (angles, distances)
+-  **No training required**
 
 #### Machine Learning Recognition (TFLite)
 - 🤖 **Neural Network** for static hand signs
@@ -82,73 +67,73 @@ This project implements a **real-time sign language recognition system** that:
 - 🤖 **Point history tracking** (16-point buffer)
 - 🤖 **85-95% accuracy** on trained gestures
 
-### 🔊 Text-to-Speech
-- 🎙️ **OpenAI TTS API** integration
-- 🎙️ **6 voice options** (alloy, echo, fable, onyx, nova, shimmer)
-- 🎙️ Natural-sounding speech output
-- 🎙️ Real-time audio playback with pygame
+###  Text-to-Speech
+-  **OpenAI TTS API** integration
+-  **6 voice options** (alloy, echo, fable, onyx, nova, shimmer)
+-  Natural-sounding speech output
+-  Real-time audio playback with pygame
 
-### 🎨 User Interface
-- 📊 **Real-time FPS counter**
-- 📊 **Gesture confidence display**
-- 📊 **Text buffer visualization**
-- 📊 **Keyboard shortcuts** for quick actions
-- 📊 **Clean, informative overlay**
+###  User Interface
+-  **Real-time FPS counter**
+-  **Gesture confidence display**
+-  **Text buffer visualization**
+-  **Keyboard shortcuts** for quick actions
+-  **Clean, informative overlay**
 
 ---
 
-## 🏗️ System Architecture
+##  System Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                      CAMERA INPUT                           │
-│                    1280×720 @ 30fps                         │
-└──────────────────────┬──────────────────────────────────────┘
+
+                      CAMERA INPUT                           
+                    1280×720 @ 30fps                         
+
                        ↓
-┌──────────────────────────────────────────────────────────────┐
-│                   HAND DETECTION                             │
-│              MediaPipe Hands (GPU)                           │
-│  • Detect 21 hand landmarks                                 │
-│  • Normalize coordinates                                    │
-│  • Track hand movement                                      │
-└──────────────────────┬───────────────────────────────────────┘
+
+                   HAND DETECTION                             
+              MediaPipe Hands (GPU)                           
+  • Detect 21 hand landmarks                                 
+  • Normalize coordinates                                    
+  • Track hand movement                                      
+
                        ↓
-              ┌────────┴────────┐
-              │                 │
-    ┌─────────▼──────┐   ┌─────▼──────────┐
-    │  Rule-Based    │   │   TFLite ML    │
-    │  Recognition   │   │   Pipeline     │
-    │                │   │                │
-    │  • Geometric   │   │  • Keypoint    │
-    │    Features    │   │    Classifier  │
-    │  • Heuristics  │   │  • Point       │
-    │  • 75-85%      │   │    History     │
-    │    Accuracy    │   │  • 85-95%      │
-    │                │   │    Accuracy    │
-    └────────┬───────┘   └────────┬───────┘
-             │                    │
-             └──────────┬─────────┘
+              
+                               
+       
+      Rule-Based          TFLite ML    
+      Recognition         Pipeline     
+                                       
+      • Geometric        • Keypoint    
+        Features           Classifier  
+      • Heuristics       • Point       
+      • 75-85%             History     
+        Accuracy         • 85-95%      
+                           Accuracy    
+       
+                                 
+             
                         ↓
-              ┌─────────────────┐
-              │  Speech Buffer  │
-              │  • Accumulate   │
-              │  • Format       │
-              └────────┬────────┘
+              
+                Speech Buffer  
+                • Accumulate   
+                • Format       
+              
                        ↓
-              ┌─────────────────┐
-              │  Text-to-Speech │
-              │  (OpenAI API)   │
-              └────────┬────────┘
+              
+                Text-to-Speech 
+                (OpenAI API)   
+              
                        ↓
-              ┌─────────────────┐
-              │  Audio Output   │
-              │  (Pygame)       │
-              └─────────────────┘
+              
+                Audio Output   
+                (Pygame)       
+              
 ```
 
 ---
 
-## 🚀 Installation
+##  Installation
 
 ### Prerequisites
 
@@ -207,7 +192,7 @@ If using Machine Learning recognition:
 
 ---
 
-## 💻 Usage
+##  Usage
 
 ### Basic Usage
 
@@ -267,52 +252,52 @@ DEBUG_MODE=False
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 Sign-Language-Recognition/
-├── 📄 README.md                    # This file
-├── 📄 requirements.txt             # Python dependencies
-├── 📄 .env.example                 # Environment variables template
-├── 📄 .gitignore                   # Git ignore rules
-│
-├── 📂 src/                         # Source code
-│   ├── 📄 __init__.py
-│   ├── 📄 main.py                  # Main application entry point
-│   ├── 📄 hand_detector.py         # MediaPipe hand detection
-│   ├── 📄 gesture_recognizer.py    # Rule-based recognition
-│   ├── 📄 text_to_speech.py        # TTS integration
-│   │
-│   └── 📂 gesture_ml/              # Machine Learning pipeline
-│       ├── 📄 __init__.py
-│       ├── 📄 tflite_pipeline.py   # TFLite gesture pipeline
-│       ├── 📄 keypoint_classifier.py
-│       └── 📄 point_history_classifier.py
-│
-├── 📂 utils/                       # Utility modules
-│   ├── 📄 __init__.py
-│   ├── 📄 config.py                # Configuration management
-│   └── 📄 helpers.py               # UI components, FPS counter
-│
-├── 📂 models/                      # Trained models
-│   └── 📂 gesture/
-│       ├── 📂 keypoint_classifier/
-│       │   ├── 📄 keypoint_classifier.tflite
-│       │   └── 📄 keypoint_classifier_label.csv
-│       └── 📂 point_history_classifier/
-│           ├── 📄 point_history_classifier.tflite
-│           └── 📄 point_history_classifier_label.csv
-│
-├── 📂 data/                        # Training data (optional)
-│   ├── 📂 raw/
-│   └── 📂 processed/
-│
-├── 📂 docs/                        # Documentation
-│   ├── 📄 PHU_LUC_CODE.md         # Code appendix (Vietnamese)
-│   ├── 📄 PHU_LUC_THUAT_TOAN_CHINH.md  # Algorithm appendix
-│   └── 📂 assets/                  # Images, diagrams
-│
-└── 📂 notebooks/                   # Jupyter notebooks (if any)
+  README.md                    # This file
+  requirements.txt             # Python dependencies
+  .env.example                 # Environment variables template
+  .gitignore                   # Git ignore rules
+
+  src/                         # Source code
+     __init__.py
+     main.py                  # Main application entry point
+     hand_detector.py         # MediaPipe hand detection
+     gesture_recognizer.py    # Rule-based recognition
+     text_to_speech.py        # TTS integration
+   
+     gesture_ml/              # Machine Learning pipeline
+         __init__.py
+         tflite_pipeline.py   # TFLite gesture pipeline
+         keypoint_classifier.py
+         point_history_classifier.py
+
+  utils/                       # Utility modules
+     __init__.py
+     config.py                # Configuration management
+     helpers.py               # UI components, FPS counter
+
+  models/                      # Trained models
+     gesture/
+         keypoint_classifier/
+            keypoint_classifier.tflite
+            keypoint_classifier_label.csv
+         point_history_classifier/
+             point_history_classifier.tflite
+             point_history_classifier_label.csv
+
+  data/                        # Training data (optional)
+     raw/
+     processed/
+
+  docs/                        # Documentation
+     PHU_LUC_CODE.md         # Code appendix (Vietnamese)
+     PHU_LUC_THUAT_TOAN_CHINH.md  # Algorithm appendix
+     assets/                  # Images, diagrams
+
+  notebooks/                   # Jupyter notebooks (if any)
 ```
 
 ---
@@ -373,13 +358,13 @@ Input: 21 landmarks × 2 coords = 42 features
     ↓
 Preprocessing: Normalize & Flatten
     ↓
-┌─────────────────────┬──────────────────────┐
-│ Keypoint Classifier │ Point History Tracker│
-│ (Static Gestures)   │ (Dynamic Gestures)   │
-│                     │                      │
-│ Dense Neural Net    │ LSTM/GRU Network     │
-│ Output: Class ID    │ Output: Motion ID    │
-└─────────────────────┴──────────────────────┘
+
+ Keypoint Classifier  Point History Tracker
+ (Static Gestures)    (Dynamic Gestures)   
+                                           
+ Dense Neural Net     LSTM/GRU Network     
+ Output: Class ID     Output: Motion ID    
+
     ↓
 Prediction: (hand_sign, finger_gesture)
 ```
@@ -399,7 +384,7 @@ def preprocess_landmarks(landmarks):
 
 ---
 
-## ⚙️ Configuration
+##  Configuration
 
 ### Camera Settings
 
@@ -434,7 +419,7 @@ TTS_LANGUAGE = "en"      # Language code
 
 ---
 
-## 📊 Performance
+##  Performance
 
 ### System Requirements
 
@@ -460,20 +445,20 @@ TTS_LANGUAGE = "en"      # Language code
 
 ```
 Component               Time      % Total
-─────────────────────────────────────────
+
 Camera Capture          5ms       15%
 Hand Detection          15ms      45%
 Gesture Recognition     8ms       24%
 UI Rendering            3ms       9%
 Other                   2ms       6%
-─────────────────────────────────────────
+
 Total                   33ms      100%
 Expected FPS            ~30
 ```
 
 ---
 
-## 🛠️ Development
+##  Development
 
 ### Setting Up Development Environment
 
@@ -572,7 +557,7 @@ Contributions are welcome! Please follow these steps:
 
 ---
 
-## 📜 License
+##  License
 
 This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
@@ -594,7 +579,7 @@ copies or substantial portions of the Software.
 
 ---
 
-## 🙏 Acknowledgments
+##  Acknowledgments
 
 ### Technologies & Libraries
 
@@ -618,7 +603,7 @@ copies or substantial portions of the Software.
 
 ---
 
-## 📞 Contact & Support
+##  Contact & Support
 
 ### Issues & Bug Reports
 
@@ -636,49 +621,49 @@ For questions and discussions, use [GitHub Discussions](https://github.com/ihate
 
 ---
 
-## 🗺️ Roadmap
+##  Roadmap
 
 ### Current Version (v1.0)
-- ✅ Real-time hand detection
-- ✅ Rule-based gesture recognition
-- ✅ TFLite ML pipeline
-- ✅ Text-to-Speech integration
-- ✅ Basic UI
+-  Real-time hand detection
+-  Rule-based gesture recognition
+-  TFLite ML pipeline
+-  Text-to-Speech integration
+-  Basic UI
 
 ### Future Enhancements (v2.0)
-- 🔲 Two-hand gesture support
-- 🔲 Sentence formation
-- 🔲 Multi-language support
-- 🔲 Mobile app (iOS/Android)
-- 🔲 Web-based interface
-- 🔲 Cloud deployment
-- 🔲 Video recording & playback
-- 🔲 Gesture customization
+-  Two-hand gesture support
+-  Sentence formation
+-  Multi-language support
+-  Mobile app (iOS/Android)
+-  Web-based interface
+-  Cloud deployment
+-  Video recording & playback
+-  Gesture customization
 
 ### Long-term Vision
-- 🎯 Community gesture database
-- 🎯 Real-time translation
-- 🎯 AR/VR integration
-- 🎯 Accessibility features
+-  Community gesture database
+-  Real-time translation
+-  AR/VR integration
+-  Accessibility features
 
 ---
 
-## 📈 Statistics
+##  Statistics
 
-![GitHub Stars](https://img.shields.io/github/stars/ihatesea69/Sign-Language-Recognition?style=social)
-![GitHub Forks](https://img.shields.io/github/forks/ihatesea69/Sign-Language-Recognition?style=social)
-![GitHub Issues](https://img.shields.io/github/issues/ihatesea69/Sign-Language-Recognition)
-![GitHub Pull Requests](https://img.shields.io/github/issues-pr/ihatesea69/Sign-Language-Recognition)
-![Code Size](https://img.shields.io/github/languages/code-size/ihatesea69/Sign-Language-Recognition)
-![Last Commit](https://img.shields.io/github/last-commit/ihatesea69/Sign-Language-Recognition)
+
+
+
+
+
+
 
 ---
 
 <div align="center">
 
-**Made with ❤️ for the deaf and hard-of-hearing community**
+**Made with  for the deaf and hard-of-hearing community**
 
-⭐ **Star this repo if you find it helpful!** ⭐
+ **Star this repo if you find it helpful!** 
 
 [Report Bug](https://github.com/ihatesea69/Sign-Language-Recognition/issues) · 
 [Request Feature](https://github.com/ihatesea69/Sign-Language-Recognition/issues) · 
