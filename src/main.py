@@ -13,6 +13,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from hand_detector import HandDetector
 from gesture_recognizer import SimpleGestureRecognizer
+from gesture_ml.tflite_pipeline import TFLiteGesturePipeline
 from text_to_speech import TextToSpeech, SpeechBuffer
 from utils.config import Config
 from utils.helpers import FPSCounter, TextRenderer, UIComponents
@@ -40,8 +41,24 @@ class SignLanguageApp:
             tracking_confidence=Config.MIN_TRACKING_CONFIDENCE
         )
         
-        # Use rule-based recognizer (no training needed!)
-        self.recognizer = SimpleGestureRecognizer()
+        # Choose gesture pipeline
+        self.use_tflite = Config.USE_TFLITE_PIPELINE
+        self.tflite_pipeline = None
+        self.recognizer = None
+        
+        if self.use_tflite:
+            try:
+                self.tflite_pipeline = TFLiteGesturePipeline(
+                    enable_logging=Config.ENABLE_GESTURE_DATA_LOGGING
+                )
+                print("✓ TFLite gesture pipeline initialized")
+            except Exception as e:
+                print(f"⚠ Warning: Could not initialize TFLite pipeline: {e}")
+                self.use_tflite = False
+        
+        if not self.use_tflite:
+            self.recognizer = SimpleGestureRecognizer()
+            print("Using rule-based gesture recognizer")
         
         # Initialize TTS (only if API key is available)
         self.tts = None
@@ -101,6 +118,7 @@ class SignLanguageApp:
         self.paused = False
         self.current_gesture = None
         self.current_confidence = 0.0
+        self.current_finger_gesture = None
         self.accumulated_text = ""
         self.last_added_gesture = None  # Track last gesture to avoid duplicates
         self.gesture_frames_count = 0  # Count frames gesture is held
@@ -129,6 +147,9 @@ class SignLanguageApp:
             'Confidence': f'{self.current_confidence:.2f}',
             'Status': 'PAUSED' if self.paused else 'ACTIVE'
         }
+        
+        if self.use_tflite:
+            info['Finger'] = self.current_finger_gesture or 'None'
         UIComponents.draw_info_panel(img, info, (10, 60), 250)
         
         # Draw accumulated text at bottom
@@ -156,6 +177,12 @@ class SignLanguageApp:
             "P - Pause/Resume",
             "Q - Quit"
         ]
+        
+        if self.use_tflite:
+            instructions.extend([
+                "K - Log keypoints, H - Log point history",
+                "N - Stop logging, 0-9 select label"
+            ])
         
         y_start = h - 250
         for i, instruction in enumerate(instructions):
@@ -196,6 +223,85 @@ class SignLanguageApp:
         # Default formatting
         return gesture.replace("_", " ").title()
     
+    def _format_landmarks(self, raw_landmarks):
+        """
+        Convert MediaPipe landmarks (id, x, y) to ordered list of (x, y)
+        """
+        if not raw_landmarks:
+            return []
+        
+        ordered = [None] * 21
+        for entry in raw_landmarks:
+            if len(entry) < 3:
+                continue
+            idx, x, y = entry
+            if 0 <= idx < len(ordered):
+                ordered[idx] = (x, y)
+        
+        if any(point is None for point in ordered):
+            return []
+        
+        return ordered
+    
+    def _emit_gesture(self, gesture: str):
+        """
+        Speak and buffer detected gesture
+        """
+        if not gesture:
+            return
+        
+        if self.tts and self.auto_speak:
+            speech_text = self._gesture_to_speech(gesture)
+            print(f"🔊 Speaking: {speech_text}")
+            self.tts.text_to_speech(speech_text, save_file=False)
+        
+        if (
+            len(gesture) == 1
+            and gesture.isalpha()
+            and self.speech_buffer
+        ):
+            self.speech_buffer.add_character(gesture)
+    
+    def _handle_detected_gesture(self, gesture: str, confidence: float):
+        """
+        Update state machine with current gesture
+        """
+        self.current_gesture = gesture
+        self.current_confidence = confidence
+        
+        if not gesture or confidence < Config.GESTURE_CONFIDENCE_THRESHOLD:
+            self.last_added_gesture = None
+            self.gesture_frames_count = 0
+            return
+        
+        if gesture == self.last_added_gesture:
+            self.gesture_frames_count += 1
+        else:
+            if (
+                self.last_added_gesture
+                and self.gesture_frames_count >= self.frames_required
+            ):
+                self._emit_gesture(self.last_added_gesture)
+            
+            self.last_added_gesture = gesture
+            self.gesture_frames_count = 1
+    
+    def _handle_no_landmarks(self):
+        """
+        Flush gesture when hand leaves the frame
+        """
+        if (
+            self.last_added_gesture
+            and self.gesture_frames_count >= self.frames_required
+        ):
+            self._emit_gesture(self.last_added_gesture)
+        
+        self.current_gesture = None
+        self.current_confidence = 0.0
+        self.current_finger_gesture = None
+        self.last_added_gesture = None
+        self.gesture_frames_count = 0
+    
     def process_frame(self, img):
         """
         Process a single frame
@@ -211,56 +317,37 @@ class SignLanguageApp:
         
         if not self.paused:
             # Get hand landmarks
-            landmarks = self.detector.find_position(img, draw=False)
+            raw_landmarks = self.detector.find_position(img, draw=False)
             
-            if len(landmarks) > 0:
-                # Recognize gesture (rule-based, no ML needed!)
-                gesture, confidence = self.recognizer.recognize(landmarks)
+            if len(raw_landmarks) > 0:
+                ordered_landmarks = self._format_landmarks(raw_landmarks)
                 
-                # Update state
-                self.current_gesture = gesture
-                self.current_confidence = confidence
-                
-                # Auto-speak gesture name if confidence is high enough
-                if gesture and confidence >= Config.GESTURE_CONFIDENCE_THRESHOLD:
-                    # Check if this is the same gesture
-                    if gesture == self.last_added_gesture:
-                        # Same gesture - count frames
-                        self.gesture_frames_count += 1
-                    else:
-                        # New gesture detected!
-                        if self.last_added_gesture and self.gesture_frames_count >= self.frames_required:
-                            # Previous gesture held long enough - speak it!
-                            if self.tts and self.auto_speak:
-                                # Speak the gesture name
-                                speech_text = self._gesture_to_speech(self.last_added_gesture)
-                                print(f"🔊 Speaking: {speech_text}")
-                                self.tts.text_to_speech(speech_text, save_file=False)
-                            
-                            # Also add letter to buffer if it's a letter
-                            if len(self.last_added_gesture) == 1 and self.last_added_gesture.isalpha() and self.speech_buffer:
-                                self.speech_buffer.add_character(self.last_added_gesture)
+                if ordered_landmarks:
+                    if self.use_tflite and self.tflite_pipeline:
+                        pipeline_input = [
+                            (idx, point[0], point[1])
+                            for idx, point in enumerate(ordered_landmarks)
+                        ]
+                        prediction = self.tflite_pipeline.process(
+                            pipeline_input,
+                            img.shape
+                        )
                         
-                        # Reset for new gesture
-                        self.last_added_gesture = gesture
-                        self.gesture_frames_count = 1
+                        if prediction:
+                            gesture = prediction.hand_sign_label.upper()
+                            confidence = 1.0
+                            self.current_finger_gesture = prediction.finger_gesture_label
+                            self._handle_detected_gesture(gesture, confidence)
+                        else:
+                            self._handle_no_landmarks()
+                    elif self.recognizer:
+                        gesture, confidence = self.recognizer.recognize(ordered_landmarks)
+                        self.current_finger_gesture = None
+                        self._handle_detected_gesture(gesture, confidence)
+                else:
+                    self._handle_no_landmarks()
             else:
-                # No hand detected - speak last gesture if held long enough
-                if self.last_added_gesture and self.gesture_frames_count >= self.frames_required:
-                    if self.tts and self.auto_speak:
-                        speech_text = self._gesture_to_speech(self.last_added_gesture)
-                        print(f"🔊 Speaking: {speech_text}")
-                        self.tts.text_to_speech(speech_text, save_file=False)
-                    
-                    # Also add letter to buffer
-                    if len(self.last_added_gesture) == 1 and self.last_added_gesture.isalpha() and self.speech_buffer:
-                        self.speech_buffer.add_character(self.last_added_gesture)
-                
-                # Reset state
-                self.current_gesture = None
-                self.current_confidence = 0.0
-                self.last_added_gesture = None
-                self.gesture_frames_count = 0
+                self._handle_no_landmarks()
         
         return img
     
@@ -271,6 +358,16 @@ class SignLanguageApp:
         Args:
             key: Key code
         """
+        if self.use_tflite and self.tflite_pipeline:
+            if ord('0') <= key <= ord('9'):
+                self.tflite_pipeline.set_logging_label(key - ord('0'))
+            elif key in (ord('k'), ord('K')):
+                self.tflite_pipeline.set_logging_mode("keypoint")
+            elif key in (ord('h'), ord('H')):
+                self.tflite_pipeline.set_logging_mode("point_history")
+            elif key in (ord('n'), ord('N')):
+                self.tflite_pipeline.set_logging_mode("off")
+        
         if self.speech_buffer is None:
             return
         
@@ -317,6 +414,9 @@ class SignLanguageApp:
         print("  - Press C to clear text")
         print("  - Press P to pause/resume")
         print("  - Press Q to quit")
+        if self.use_tflite:
+            print("  - Press K to log keypoints, H for point history")
+            print("  - Press N to stop logging, 0-9 to set label")
         print("="*60 + "\n")
         
         try:

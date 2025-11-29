@@ -1,12 +1,14 @@
+# ===================================
 # Python
+# ===================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.pyd
 .Python
-venv/
-env/
-ENV/
+
+# Distribution / packaging
 build/
 develop-eggs/
 dist/
@@ -19,51 +21,258 @@ parts/
 sdist/
 var/
 wheels/
+pip-wheel-metadata/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
 
+# PyInstaller
+*.manifest
+*.spec
+
+# ===================================
 # Virtual Environment
+# ===================================
 venv/
-ENV/
 env/
+ENV/
+.venv/
+virtualenv/
+pipenv/
 
-# IDE
+# ===================================
+# IDE & Editors
+# ===================================
+# VSCode
 .vscode/
+.history/
+*.code-workspace
+
+# PyCharm
 .idea/
+*.iml
+*.iws
+out/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
 *.swp
 *.swo
 *~
+.vim/
 
+# Emacs
+*~
+\#*\#
+.\#*
+
+# ===================================
 # Environment Variables
+# ===================================
 .env
+.env.local
+.env.*.local
+*.env
 
-# AI Context (personal notes, not for version control)
-MEMORY.md
+# Keep example file
+!.env.example
 
-# OS
+# ===================================
+# Operating System
+# ===================================
+# macOS
 .DS_Store
-Thumbs.db
+.AppleDouble
+.LSOverride
+._*
 
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ===================================
 # Project Specific
+# ===================================
+# Models
 models/*.pkl
+models/*.h5
+models/*.pth
+models/*.onnx
+*.tflite.backup
+
+# Data
 data/raw/
 data/processed/
+data/temp/
+data/cache/
+datasets/
+
+# Audio files
 *.mp3
 *.wav
+*.ogg
+*.flac
+audio_output/
+temp_audio/
+
+# Logs
 logs/
 *.log
+*.log.*
+log_*.txt
 
 # Jupyter Notebooks
 .ipynb_checkpoints/
 *.ipynb
+notebooks/*.ipynb
+!notebooks/example.ipynb
 
-# Testing
+# ===================================
+# Testing & Coverage
+# ===================================
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+nosetests.xml
+test-results/
 
-# Temporary files
+# ===================================
+# Documentation
+# ===================================
+docs/_build/
+docs/.doctrees/
+site/
+.ropeproject
+
+# ===================================
+# Temporary & Cache files
+# ===================================
 tmp/
 temp/
 *.tmp
+*.temp
+*.cache
+.cache/
+*.bak
+*.swp
+
+# ===================================
+# AI & ML Specific
+# ===================================
+# TensorFlow
+*.ckpt
+*.ckpt.*
+checkpoint
+*.pb
+saved_model/
+
+# PyTorch
+*.pt
+*.pth
+
+# Weights
+weights/
+checkpoints/
+
+# Training data
+training_logs/
+tensorboard_logs/
+runs/
+
+# ===================================
+# Personal & Private
+# ===================================
+# AI Context (personal notes)
+MEMORY.md
+NOTES.md
+TODO.md
+.private/
+private/
+
+# Credentials
+credentials.json
+service_account.json
+*.pem
+*.key
+
+# ===================================
+# Media Files (Large)
+# ===================================
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+videos/
+demos/
+
+# Images (optional - uncomment if needed)
+# *.jpg
+# *.jpeg
+# *.png
+# *.gif
+
+# ===================================
+# Build & Deployment
+# ===================================
+*.exe
+*.dll
+*.so
+*.dylib
+*.app
+*.dmg
+*.deb
+*.rpm
+
+# Docker
+docker-compose.override.yml
+.dockerignore
+
+# ===================================
+# Package Managers
+# ===================================
+# npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ===================================
+# Git
+# ===================================
+*.orig
+*.rej
+.git-credentials
+
+# ===================================
+# Miscellaneous
+# ===================================
+.localized
+*.lnk
+.vagrant/
+*.pid
+*.seed
+*.pid.lock

@@ -43,12 +43,51 @@ class Config:
     DEBUG_MODE = os.getenv('DEBUG_MODE', 'False').lower() == 'true'
     SHOW_FPS = os.getenv('SHOW_FPS', 'True').lower() == 'true'
     LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
+    USE_TFLITE_PIPELINE = os.getenv('USE_TFLITE_PIPELINE', 'False').lower() == 'true'
+    ENABLE_GESTURE_DATA_LOGGING = os.getenv('ENABLE_GESTURE_DATA_LOGGING', 'False').lower() == 'true'
     
     # Paths
     BASE_DIR = Path(__file__).parent.parent
     MODELS_DIR = BASE_DIR / 'models'
     DATA_DIR = BASE_DIR / 'data'
     OUTPUT_DIR = BASE_DIR / 'output'
+    NOTEBOOKS_DIR = BASE_DIR / 'notebooks'
+    DOCS_DIR = BASE_DIR / 'docs'
+    
+    # Gesture assets
+    GESTURE_ASSETS_DIR = MODELS_DIR / 'gesture'
+    GESTURE_KEYPOINT_DIR = GESTURE_ASSETS_DIR / 'keypoint_classifier'
+    GESTURE_POINT_HISTORY_DIR = GESTURE_ASSETS_DIR / 'point_history_classifier'
+    GESTURE_KEYPOINT_TFLITE = Path(os.getenv(
+        'GESTURE_KEYPOINT_TFLITE',
+        GESTURE_KEYPOINT_DIR / 'keypoint_classifier.tflite'
+    ))
+    GESTURE_POINT_HISTORY_TFLITE = Path(os.getenv(
+        'GESTURE_POINT_HISTORY_TFLITE',
+        GESTURE_POINT_HISTORY_DIR / 'point_history_classifier.tflite'
+    ))
+    GESTURE_KEYPOINT_LABELS = Path(os.getenv(
+        'GESTURE_KEYPOINT_LABELS',
+        GESTURE_KEYPOINT_DIR / 'keypoint_classifier_label.csv'
+    ))
+    GESTURE_POINT_HISTORY_LABELS = Path(os.getenv(
+        'GESTURE_POINT_HISTORY_LABELS',
+        GESTURE_POINT_HISTORY_DIR / 'point_history_classifier_label.csv'
+    ))
+    GESTURE_KEYPOINT_CSV = Path(os.getenv(
+        'GESTURE_KEYPOINT_CSV',
+        GESTURE_KEYPOINT_DIR / 'keypoint.csv'
+    ))
+    GESTURE_POINT_HISTORY_CSV = Path(os.getenv(
+        'GESTURE_POINT_HISTORY_CSV',
+        GESTURE_POINT_HISTORY_DIR / 'point_history.csv'
+    ))
+    GESTURE_POINT_HISTORY_TRIGGER_IDS = [
+        int(item.strip()) for item in os.getenv(
+            'GESTURE_POINT_HISTORY_TRIGGER_IDS',
+            '2'
+        ).split(',') if item.strip().isdigit()
+    ] or [2]
     
     # Model Path
     GESTURE_MODEL_PATH = MODELS_DIR / 'gesture_model.pkl'
@@ -120,6 +159,8 @@ class Config:
         print(f"TTS: Model={cls.TTS_MODEL}, Voice={cls.TTS_VOICE}")
         print(f"Debug Mode: {cls.DEBUG_MODE}")
         print(f"Show FPS: {cls.SHOW_FPS}")
+        print(f"Use TFLite Pipeline: {cls.USE_TFLITE_PIPELINE}")
+        print(f"Gesture Assets Dir: {cls.GESTURE_ASSETS_DIR}")
         print("=" * 60 + "\n")
     
     @classmethod
