@@ -1,654 +1,654 @@
-#🤟SignLanguageRecognitionwithText-to-Speech
-
-[](https://www.python.org/downloads/)
-[](https://opencv.org/)
-[](https://mediapipe.dev/)
-[](https://www.tensorflow.org/)
-[](LICENSE)
-
-
->**Areal-timesignlanguagerecognitionsystemwithText-to-Speechoutput,poweredbyMediaPipeandMachineLearning**
+#  Sign Language Recognition with Text-to-Speech
 
 
 
----
 
-##TableofContents
 
--[Overview](#-overview)
--[Features](#-features)
--[SystemArchitecture](#-system-architecture)
--[Installation](#-installation)
--[Usage](#-usage)
--[ProjectStructure](#-project-structure)
--[Algorithms](#-algorithms)
--[Configuration](#-configuration)
--[Performance](#-performance)
--[Development](#-development)
--[Contributing](#-contributing)
--[License](#-license)
--[Acknowledgments](#-acknowledgments)
 
----
 
-##Overview
 
-Thisprojectimplementsa**real-timesignlanguagerecognitionsystem**that:
--Detectshandgesturesusing**MediaPipeHands**
--Recognizesgesturesthrough**Rule-Based**and**MachineLearning**algorithms
--Convertsrecognizedsignstospeechusing**OpenAIText-to-SpeechAPI**
--Providesaninteractiveinterfaceforseamlesscommunication
-
-###Demo
+> **A real-time sign language recognition system with Text-to-Speech output, powered by MediaPipe and Machine Learning**
 
 
 
 ---
 
-##Features
+##  Table of Contents
 
-###HandDetection&Tracking
--**21handlandmarks**detectionusingMediaPipe
--Real-timetrackingwith**30FPS**performance
--Supportforboth**leftandrighthands**
--Robustdetectionundervariouslightingconditions
-
-###GestureRecognition
-####Rule-BasedRecognition
--**15-20staticgestures**(A-Zletters,numbers0-9)
--Commonsigns:OK,Peace,ThumbsUp,Fist,etc.
--**Geometricfeatureextraction**(angles,distances)
--**Notrainingrequired**
-
-####MachineLearningRecognition(TFLite)
--🤖**NeuralNetwork**forstatichandsigns
--🤖**LSTM/GRU**fordynamicmotiongestures
--🤖**Keypointclassification**(42features)
--🤖**Pointhistorytracking**(16-pointbuffer)
--🤖**85-95%accuracy**ontrainedgestures
-
-###Text-to-Speech
--**OpenAITTSAPI**integration
--**6voiceoptions**(alloy,echo,fable,onyx,nova,shimmer)
--Natural-soundingspeechoutput
--Real-timeaudioplaybackwithpygame
-
-###UserInterface
--**Real-timeFPScounter**
--**Gestureconfidencedisplay**
--**Textbuffervisualization**
--**Keyboardshortcuts**forquickactions
--**Clean,informativeoverlay**
+- [Overview](#-overview)
+- [Features](#-features)
+- [System Architecture](#-system-architecture)
+- [Installation](#-installation)
+- [Usage](#-usage)
+- [Project Structure](#-project-structure)
+- [Algorithms](#-algorithms)
+- [Configuration](#-configuration)
+- [Performance](#-performance)
+- [Development](#-development)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Acknowledgments](#-acknowledgments)
 
 ---
 
-##SystemArchitecture
+##  Overview
+
+This project implements a **real-time sign language recognition system** that:
+- Detects hand gestures using **MediaPipe Hands**
+- Recognizes gestures through **Rule-Based** and **Machine Learning** algorithms
+- Converts recognized signs to speech using **OpenAI Text-to-Speech API**
+- Provides an interactive interface for seamless communication
+
+###  Demo
+
+
+
+---
+
+## ✨ Features
+
+### ️ Hand Detection & Tracking
+- **21 hand landmarks** detection using MediaPipe
+- Real-time tracking with **30 FPS** performance
+- Support for both **left and right hands**
+- Robust detection under various lighting conditions
+
+###  Gesture Recognition
+#### Rule-Based Recognition
+- ✅ **15-20 static gestures** (A-Z letters, numbers 0-9)
+- ✅ Common signs: OK, Peace, Thumbs Up, Fist, etc.
+- ✅ **Geometric feature extraction** (angles, distances)
+- ✅ **No training required**
+
+#### Machine Learning Recognition (TFLite)
+-  **Neural Network** for static hand signs
+-  **LSTM/GRU** for dynamic motion gestures
+-  **Keypoint classification** (42 features)
+-  **Point history tracking** (16-point buffer)
+-  **85-95% accuracy** on trained gestures
+
+###  Text-to-Speech
+- ️ **OpenAI TTS API** integration
+- ️ **6 voice options** (alloy, echo, fable, onyx, nova, shimmer)
+- ️ Natural-sounding speech output
+- ️ Real-time audio playback with pygame
+
+###  User Interface
+-  **Real-time FPS counter**
+-  **Gesture confidence display**
+-  **Text buffer visualization**
+-  **Keyboard shortcuts** for quick actions
+-  **Clean, informative overlay**
+
+---
+
+## ️ System Architecture
 
 ```
-
-CAMERAINPUT
-1280×720@30fps
-
-↓
-
-HANDDETECTION
-MediaPipeHands(GPU)
-•Detect21handlandmarks
-•Normalizecoordinates
-•Trackhandmovement
-
-↓
-
-
-
-Rule-BasedTFLiteML
-RecognitionPipeline
-
-•Geometric•Keypoint
-FeaturesClassifier
-•Heuristics•Point
-•75-85%History
-Accuracy•85-95%
-Accuracy
-
-
-
-↓
-
-SpeechBuffer
-•Accumulate
-•Format
-
-↓
-
-Text-to-Speech
-(OpenAIAPI)
-
-↓
-
-AudioOutput
-(Pygame)
-
+┌─────────────────────────────────────────────────────────────┐
+│                      CAMERA INPUT                           │
+│                    1280×720 @ 30fps                         │
+└──────────────────────┬──────────────────────────────────────┘
+                       ↓
+┌──────────────────────────────────────────────────────────────┐
+│                   HAND DETECTION                             │
+│              MediaPipe Hands (GPU)                           │
+│  • Detect 21 hand landmarks                                 │
+│  • Normalize coordinates                                    │
+│  • Track hand movement                                      │
+└──────────────────────┬───────────────────────────────────────┘
+                       ↓
+              ┌────────┴────────┐
+              │                 │
+    ┌─────────▼──────┐   ┌─────▼──────────┐
+    │  Rule-Based    │   │   TFLite ML    │
+    │  Recognition   │   │   Pipeline     │
+    │                │   │                │
+    │  • Geometric   │   │  • Keypoint    │
+    │    Features    │   │    Classifier  │
+    │  • Heuristics  │   │  • Point       │
+    │  • 75-85%      │   │    History     │
+    │    Accuracy    │   │  • 85-95%      │
+    │                │   │    Accuracy    │
+    └────────┬───────┘   └────────┬───────┘
+             │                    │
+             └──────────┬─────────┘
+                        ↓
+              ┌─────────────────┐
+              │  Speech Buffer  │
+              │  • Accumulate   │
+              │  • Format       │
+              └────────┬────────┘
+                       ↓
+              ┌─────────────────┐
+              │  Text-to-Speech │
+              │  (OpenAI API)   │
+              └────────┬────────┘
+                       ↓
+              ┌─────────────────┐
+              │  Audio Output   │
+              │  (Pygame)       │
+              └─────────────────┘
 ```
 
 ---
 
-##Installation
+##  Installation
 
-###Prerequisites
+### Prerequisites
 
--**Python3.8+**
--**Webcam**(built-inorexternal)
--**OpenAIAPIKey**(forText-to-Speechfeature)
--**GPU**(optional,forbetterperformance)
+- **Python 3.8+**
+- **Webcam** (built-in or external)
+- **OpenAI API Key** (for Text-to-Speech feature)
+- **GPU** (optional, for better performance)
 
-###Step1:ClonetheRepository
+### Step 1: Clone the Repository
 
 ```bash
-gitclonehttps://github.com/ihatesea69/Sign-Language-Recognition.git
-cdSign-Language-Recognition
+git clone https://github.com/ihatesea69/Sign-Language-Recognition.git
+cd Sign-Language-Recognition
 ```
 
-###Step2:CreateVirtualEnvironment
+### Step 2: Create Virtual Environment
 
 ```bash
-#Windows
-python-mvenvvenv
+# Windows
+python -m venv venv
 venv\Scripts\activate
 
-#macOS/Linux
-python3-mvenvvenv
-sourcevenv/bin/activate
+# macOS/Linux
+python3 -m venv venv
+source venv/bin/activate
 ```
 
-###Step3:InstallDependencies
+### Step 3: Install Dependencies
 
 ```bash
-pipinstall-rrequirements.txt
+pip install -r requirements.txt
 ```
 
-###Step4:ConfigureEnvironment
+### Step 4: Configure Environment
 
-1.Copytheexampleenvironmentfile:
+1. Copy the example environment file:
 ```bash
-copy.env.example.env#Windows
-#or
-cp.env.example.env#macOS/Linux
+copy .env.example .env  # Windows
+# or
+cp .env.example .env    # macOS/Linux
 ```
 
-2.Edit`.env`andaddyourOpenAIAPIkey:
+2. Edit `.env` and add your OpenAI API key:
 ```env
 OPENAI_API_KEY=your_api_key_here
 ```
 
-###Step5:(Optional)DownloadTFLiteModels
+### Step 5: (Optional) Download TFLite Models
 
-IfusingMachineLearningrecognition:
+If using Machine Learning recognition:
 ```bash
-#Modelsshouldbeplacedin:
-#models/gesture/keypoint_classifier/keypoint_classifier.tflite
-#models/gesture/point_history_classifier/point_history_classifier.tflite
+# Models should be placed in:
+# models/gesture/keypoint_classifier/keypoint_classifier.tflite
+# models/gesture/point_history_classifier/point_history_classifier.tflite
 ```
 
 ---
 
-##Usage
+##  Usage
 
-###BasicUsage
+### Basic Usage
 
-Runthemainapplication:
+Run the main application:
 ```bash
-pythonsrc/main.py
+python src/main.py
 ```
 
-###KeyboardControls
+### Keyboard Controls
 
-|Key|Action|
+| Key | Action |
 |-----|--------|
-|**SPACE**|Addspacetotextbuffer|
-|**ENTER**|Speakaccumulatedtext|
-|**BACKSPACE**|Deletelastcharacter|
-|**C**|Cleartextbuffer|
-|**P**|Pause/Resumedetection|
-|**Q**|Quitapplication|
+| **SPACE** | Add space to text buffer |
+| **ENTER** | Speak accumulated text |
+| **BACKSPACE** | Delete last character |
+| **C** | Clear text buffer |
+| **P** | Pause/Resume detection |
+| **Q** | Quit application |
 
-###TFLiteTrainingMode(Optional)
+### TFLite Training Mode (Optional)
 
-|Key|Action|
+| Key | Action |
 |-----|--------|
-|**0-9**|Selectlabelforlogging|
-|**K**|Logkeypointdata|
-|**H**|Logpointhistorydata|
-|**N**|Stoplogging|
+| **0-9** | Select label for logging |
+| **K** | Log keypoint data |
+| **H** | Log point history data |
+| **N** | Stop logging |
 
-###ConfigurationOptions
+### Configuration Options
 
-Edit`.env`filetocustomize:
+Edit `.env` file to customize:
 
 ```env
-#CameraSettings
+# Camera Settings
 CAMERA_INDEX=0
 CAMERA_WIDTH=1280
 CAMERA_HEIGHT=720
 
-#DetectionSettings
+# Detection Settings
 MIN_DETECTION_CONFIDENCE=0.7
 MIN_TRACKING_CONFIDENCE=0.5
 GESTURE_CONFIDENCE_THRESHOLD=0.8
 
-#TTSSettings
+# TTS Settings
 TTS_MODEL=tts-1
 TTS_VOICE=alloy
 TTS_LANGUAGE=en
 
-#RecognitionMode
+# Recognition Mode
 USE_TFLITE_PIPELINE=False
 ENABLE_GESTURE_DATA_LOGGING=False
 
-#Display
+# Display
 SHOW_FPS=True
 DEBUG_MODE=False
 ```
 
 ---
 
-##ProjectStructure
+##  Project Structure
 
 ```
 Sign-Language-Recognition/
-README.md#Thisfile
-requirements.txt#Pythondependencies
-.env.example#Environmentvariablestemplate
-.gitignore#Gitignorerules
-
-src/#Sourcecode
-__init__.py
-main.py#Mainapplicationentrypoint
-hand_detector.py#MediaPipehanddetection
-gesture_recognizer.py#Rule-basedrecognition
-text_to_speech.py#TTSintegration
-
-gesture_ml/#MachineLearningpipeline
-__init__.py
-tflite_pipeline.py#TFLitegesturepipeline
-keypoint_classifier.py
-point_history_classifier.py
-
-utils/#Utilitymodules
-__init__.py
-config.py#Configurationmanagement
-helpers.py#UIcomponents,FPScounter
-
-models/#Trainedmodels
-gesture/
-keypoint_classifier/
-keypoint_classifier.tflite
-keypoint_classifier_label.csv
-point_history_classifier/
-point_history_classifier.tflite
-point_history_classifier_label.csv
-
-data/#Trainingdata(optional)
-raw/
-processed/
-
-docs/#Documentation
-PHU_LUC_CODE.md#Codeappendix(Vietnamese)
-PHU_LUC_THUAT_TOAN_CHINH.md#Algorithmappendix
-assets/#Images,diagrams
-
-notebooks/#Jupyternotebooks(ifany)
+├──  README.md                    # This file
+├──  requirements.txt             # Python dependencies
+├──  .env.example                 # Environment variables template
+├──  .gitignore                   # Git ignore rules
+│
+├──  src/                         # Source code
+│   ├──  __init__.py
+│   ├──  main.py                  # Main application entry point
+│   ├──  hand_detector.py         # MediaPipe hand detection
+│   ├──  gesture_recognizer.py    # Rule-based recognition
+│   ├──  text_to_speech.py        # TTS integration
+│   │
+│   └──  gesture_ml/              # Machine Learning pipeline
+│       ├──  __init__.py
+│       ├──  tflite_pipeline.py   # TFLite gesture pipeline
+│       ├──  keypoint_classifier.py
+│       └──  point_history_classifier.py
+│
+├──  utils/                       # Utility modules
+│   ├──  __init__.py
+│   ├──  config.py                # Configuration management
+│   └──  helpers.py               # UI components, FPS counter
+│
+├──  models/                      # Trained models
+│   └──  gesture/
+│       ├──  keypoint_classifier/
+│       │   ├──  keypoint_classifier.tflite
+│       │   └──  keypoint_classifier_label.csv
+│       └──  point_history_classifier/
+│           ├──  point_history_classifier.tflite
+│           └──  point_history_classifier_label.csv
+│
+├──  data/                        # Training data (optional)
+│   ├──  raw/
+│   └──  processed/
+│
+├──  docs/                        # Documentation
+│   ├──  PHU_LUC_CODE.md         # Code appendix (Vietnamese)
+│   ├──  PHU_LUC_THUAT_TOAN_CHINH.md  # Algorithm appendix
+│   └──  assets/                  # Images, diagrams
+│
+└──  notebooks/                   # Jupyter notebooks (if any)
 ```
 
 ---
 
-##🧠Algorithms
+##  Algorithms
 
-###1.HandDetectionAlgorithm
+### 1. Hand Detection Algorithm
 
-**Method:**MediaPipeHands(BlazePalm+BlazeLandmark)
+**Method:** MediaPipe Hands (BlazePalm + BlazeLandmark)
 
 ```python
-#Pseudo-code
-defdetect_hand(image):
-1.ConvertBGRtoRGB
-2.ApplyMediaPipeHandsdetection
-3.Extract21landmarks(ifdetected)
-4.Normalizecoordinatesto[0,1]
-5.Converttopixelcoordinates
-returnlandmarks
+# Pseudo-code
+def detect_hand(image):
+    1. Convert BGR to RGB
+    2. Apply MediaPipe Hands detection
+    3. Extract 21 landmarks (if detected)
+    4. Normalize coordinates to [0, 1]
+    5. Convert to pixel coordinates
+    return landmarks
 ```
 
-**Complexity:**O(1)-constanttime(optimizedCNN)
+**Complexity:** O(1) - constant time (optimized CNN)
 
-###2.Rule-BasedGestureRecognition
+### 2. Rule-Based Gesture Recognition
 
 **Features:**
--Fingerstates(up/down)
--Anglesatjoints(PIP,MCP)
--Distancesbetweenlandmarks
--Palmsizenormalization
+- Finger states (up/down)
+- Angles at joints (PIP, MCP)
+- Distances between landmarks
+- Palm size normalization
 
 ```python
-#Simplifiedalgorithm
-defrecognize_gesture(landmarks):
-1.Extractgeometricfeatures
--fingers_up=[thumb,index,middle,ring,pinky]
--angles=compute_joint_angles(landmarks)
--distances=compute_pairwise_distances(landmarks)
-
-2.Applyrulematching(priorityorder)
--OKsign:thumb+indextouching
--Peace:index+middleseparated
--Fist:allfingersdown
--...
-
-3.Smoothwithhistorybuffer
-
-return(gesture_name,confidence)
+# Simplified algorithm
+def recognize_gesture(landmarks):
+    1. Extract geometric features
+       - fingers_up = [thumb, index, middle, ring, pinky]
+       - angles = compute_joint_angles(landmarks)
+       - distances = compute_pairwise_distances(landmarks)
+    
+    2. Apply rule matching (priority order)
+       - OK sign: thumb + index touching
+       - Peace: index + middle separated
+       - Fist: all fingers down
+       - ...
+    
+    3. Smooth with history buffer
+    
+    return (gesture_name, confidence)
 ```
 
-**Complexity:**O(1)-fixednumberoflandmarksandrules
+**Complexity:** O(1) - fixed number of landmarks and rules
 
-###3.MachineLearningRecognition
+### 3. Machine Learning Recognition
 
 **Architecture:**
 ```
-Input:21landmarks×2coords=42features
-↓
-Preprocessing:Normalize&Flatten
-↓
-
-KeypointClassifierPointHistoryTracker
-(StaticGestures)(DynamicGestures)
-
-DenseNeuralNetLSTM/GRUNetwork
-Output:ClassIDOutput:MotionID
-
-↓
-Prediction:(hand_sign,finger_gesture)
+Input: 21 landmarks × 2 coords = 42 features
+    ↓
+Preprocessing: Normalize & Flatten
+    ↓
+┌─────────────────────┬──────────────────────┐
+│ Keypoint Classifier │ Point History Tracker│
+│ (Static Gestures)   │ (Dynamic Gestures)   │
+│                     │                      │
+│ Dense Neural Net    │ LSTM/GRU Network     │
+│ Output: Class ID    │ Output: Motion ID    │
+└─────────────────────┴──────────────────────┘
+    ↓
+Prediction: (hand_sign, finger_gesture)
 ```
 
 **Preprocessing:**
 ```python
-defpreprocess_landmarks(landmarks):
-1.Translatetoorigin(wrist=0,0)
-2.Flattento1Darray[x0,y0,x1,y1,...,x20,y20]
-3.Normalizebymaxabsolutevalue
-returnnormalized_vector
+def preprocess_landmarks(landmarks):
+    1. Translate to origin (wrist = 0, 0)
+    2. Flatten to 1D array [x0,y0,x1,y1,...,x20,y20]
+    3. Normalize by max absolute value
+    return normalized_vector
 ```
 
-**Complexity:**
--Preprocessing:O(n)wheren=21
--Inference:O(m)wherem=modelparameters
+**Complexity:** 
+- Preprocessing: O(n) where n=21
+- Inference: O(m) where m=model parameters
 
 ---
 
-##Configuration
+## ⚙️ Configuration
 
-###CameraSettings
+### Camera Settings
 
 ```python
-CAMERA_INDEX=0#Cameradeviceindex
-CAMERA_WIDTH=1280#Resolutionwidth
-CAMERA_HEIGHT=720#Resolutionheight
+CAMERA_INDEX = 0          # Camera device index
+CAMERA_WIDTH = 1280       # Resolution width
+CAMERA_HEIGHT = 720       # Resolution height
 ```
 
-###DetectionThresholds
+### Detection Thresholds
 
 ```python
-MIN_DETECTION_CONFIDENCE=0.7#Handdetectionthreshold
-MIN_TRACKING_CONFIDENCE=0.5#Handtrackingthreshold
-GESTURE_CONFIDENCE_THRESHOLD=0.8#Gestureacceptancethreshold
+MIN_DETECTION_CONFIDENCE = 0.7   # Hand detection threshold
+MIN_TRACKING_CONFIDENCE = 0.5    # Hand tracking threshold
+GESTURE_CONFIDENCE_THRESHOLD = 0.8  # Gesture acceptance threshold
 ```
 
-###RecognitionMode
+### Recognition Mode
 
 ```python
-USE_TFLITE_PIPELINE=False#True:ML,False:Rule-based
-ENABLE_GESTURE_DATA_LOGGING=False#Enabletrainingdatacollection
+USE_TFLITE_PIPELINE = False  # True: ML, False: Rule-based
+ENABLE_GESTURE_DATA_LOGGING = False  # Enable training data collection
 ```
 
-###Text-to-Speech
+### Text-to-Speech
 
 ```python
-TTS_MODEL="tts-1"#Options:"tts-1","tts-1-hd"
-TTS_VOICE="alloy"#Options:alloy,echo,fable,onyx,nova,shimmer
-TTS_LANGUAGE="en"#Languagecode
+TTS_MODEL = "tts-1"      # Options: "tts-1", "tts-1-hd"
+TTS_VOICE = "alloy"      # Options: alloy, echo, fable, onyx, nova, shimmer
+TTS_LANGUAGE = "en"      # Language code
 ```
 
 ---
 
-##Performance
+##  Performance
 
-###SystemRequirements
+### System Requirements
 
-|Component|Minimum|Recommended|
+| Component | Minimum | Recommended |
 |-----------|---------|-------------|
-|**CPU**|Inteli5/AMDRyzen5|Inteli7/AMDRyzen7|
-|**RAM**|4GB|8GB|
-|**GPU**|Integrated|NVIDIAGTX1050+|
-|**Camera**|720p@30fps|1080p@60fps|
-|**Python**|3.8+|3.10+|
+| **CPU** | Intel i5 / AMD Ryzen 5 | Intel i7 / AMD Ryzen 7 |
+| **RAM** | 4 GB | 8 GB |
+| **GPU** | Integrated | NVIDIA GTX 1050+ |
+| **Camera** | 720p @ 30fps | 1080p @ 60fps |
+| **Python** | 3.8+ | 3.10+ |
 
-###BenchmarkResults
+### Benchmark Results
 
-|Metric|Rule-Based|TFLiteML|
+| Metric | Rule-Based | TFLite ML |
 |--------|-----------|-----------|
-|**Accuracy**|75-85%|85-95%|
-|**FPS**|~30|~25|
-|**Latency**|<10ms|~20ms|
-|**Gestures**|15-20|10+(expandable)|
-|**Training**|None|Required|
+| **Accuracy** | 75-85% | 85-95% |
+| **FPS** | ~30 | ~25 |
+| **Latency** | <10ms | ~20ms |
+| **Gestures** | 15-20 | 10+ (expandable) |
+| **Training** | None | Required |
 
-###PerformanceBreakdown(perframe)
+### Performance Breakdown (per frame)
 
 ```
-ComponentTime%Total
-
-CameraCapture5ms15%
-HandDetection15ms45%
-GestureRecognition8ms24%
-UIRendering3ms9%
-Other2ms6%
-
-Total33ms100%
-ExpectedFPS~30
+Component               Time      % Total
+─────────────────────────────────────────
+Camera Capture          5ms       15%
+Hand Detection          15ms      45%
+Gesture Recognition     8ms       24%
+UI Rendering            3ms       9%
+Other                   2ms       6%
+─────────────────────────────────────────
+Total                   33ms      100%
+Expected FPS            ~30
 ```
 
 ---
 
-##Development
+## ️ Development
 
-###SettingUpDevelopmentEnvironment
+### Setting Up Development Environment
 
-1.**Installdevelopmentdependencies:**
+1. **Install development dependencies:**
 ```bash
-pipinstall-rrequirements-dev.txt#Ifavailable
+pip install -r requirements-dev.txt  # If available
 ```
 
-2.**Enabledebugmode:**
+2. **Enable debug mode:**
 ```env
 DEBUG_MODE=True
 LOG_LEVEL=DEBUG
 ```
 
-3.**Runtests:**
+3. **Run tests:**
 ```bash
-#Unittests
-python-mpytesttests/
+# Unit tests
+python -m pytest tests/
 
-#Integrationtests
-python-mpytesttests/integration/
+# Integration tests
+python -m pytest tests/integration/
 ```
 
-###TrainingCustomGestures(TFLite)
+### Training Custom Gestures (TFLite)
 
-1.**Enableloggingmode:**
+1. **Enable logging mode:**
 ```env
 ENABLE_GESTURE_DATA_LOGGING=True
 ```
 
-2.**Collecttrainingdata:**
+2. **Collect training data:**
 ```bash
-pythonsrc/main.py
-#Press0-9toselectlabel
-#PressKtologkeypoints
-#PressHtologpointhistory
-#Repeatforeachgesture
+python src/main.py
+# Press 0-9 to select label
+# Press K to log keypoints
+# Press H to log point history
+# Repeat for each gesture
 ```
 
-3.**Trainmodels:**
+3. **Train models:**
 ```bash
-#Trainkeypointclassifier
-pythonscripts/train_keypoint_classifier.py
+# Train keypoint classifier
+python scripts/train_keypoint_classifier.py
 
-#Trainpointhistoryclassifier
-pythonscripts/train_point_history_classifier.py
+# Train point history classifier
+python scripts/train_point_history_classifier.py
 ```
 
-4.**Deploymodels:**
+4. **Deploy models:**
 ```bash
-#Copytrained.tflitefilestomodels/gesture/
+# Copy trained .tflite files to models/gesture/
 ```
 
-###CodeStyle
+### Code Style
 
--**PEP8**compliance
--**Typehints**forfunctionsignatures
--**Docstrings**forclassesandmethods
--**Comments**forcomplexlogic
+- **PEP 8** compliance
+- **Type hints** for function signatures
+- **Docstrings** for classes and methods
+- **Comments** for complex logic
 
-###GitWorkflow
+### Git Workflow
 
 ```bash
-#Createfeaturebranch
-gitcheckout-bfeature/your-feature-name
+# Create feature branch
+git checkout -b feature/your-feature-name
 
-#Makechangesandcommit
-gitadd.
-gitcommit-m"feat:addnewgesturerecognition"
+# Make changes and commit
+git add .
+git commit -m "feat: add new gesture recognition"
 
-#Pushtoremote
-gitpushoriginfeature/your-feature-name
+# Push to remote
+git push origin feature/your-feature-name
 
-#CreatepullrequestonGitHub
+# Create pull request on GitHub
 ```
 
 ---
 
-##🤝Contributing
+##  Contributing
 
-Contributionsarewelcome!Pleasefollowthesesteps:
+Contributions are welcome! Please follow these steps:
 
-1.**Fork**therepository
-2.**Create**afeaturebranch(`gitcheckout-bfeature/amazing-feature`)
-3.**Commit**yourchanges(`gitcommit-m'Addamazingfeature'`)
-4.**Push**tothebranch(`gitpushoriginfeature/amazing-feature`)
-5.**Open**aPullRequest
+1. **Fork** the repository
+2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
+3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
+4. **Push** to the branch (`git push origin feature/amazing-feature`)
+5. **Open** a Pull Request
 
-###ContributionGuidelines
+### Contribution Guidelines
 
--Writeclean,documentedcode
--Addtestsfornewfeatures
--Updatedocumentationasneeded
--Followexistingcodestyle
--Berespectfulandconstructive
+- Write clean, documented code
+- Add tests for new features
+- Update documentation as needed
+- Follow existing code style
+- Be respectful and constructive
 
 ---
 
-##License
+##  License
 
-Thisprojectislicensedunderthe**MITLicense**-seethe[LICENSE](LICENSE)filefordetails.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ```
-MITLicense
+MIT License
 
-Copyright(c)2025SignLanguageRecognitionTeam
+Copyright (c) 2025 Sign Language Recognition Team
 
-Permissionisherebygranted,freeofcharge,toanypersonobtainingacopy
-ofthissoftwareandassociateddocumentationfiles(the"Software"),todeal
-intheSoftwarewithoutrestriction,includingwithoutlimitationtherights
-touse,copy,modify,merge,publish,distribute,sublicense,and/orsell
-copiesoftheSoftware,andtopermitpersonstowhomtheSoftwareis
-furnishedtodoso,subjecttothefollowingconditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-Theabovecopyrightnoticeandthispermissionnoticeshallbeincludedinall
-copiesorsubstantialportionsoftheSoftware.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 ```
 
 ---
 
-##Acknowledgments
+##  Acknowledgments
 
-###Technologies&Libraries
+### Technologies & Libraries
 
--**[MediaPipe](https://mediapipe.dev/)**-Handdetectionandtracking
--**[OpenCV](https://opencv.org/)**-Computervisionoperations
--**[TensorFlowLite](https://www.tensorflow.org/lite)**-MLinference
--**[OpenAI](https://openai.com/)**-Text-to-SpeechAPI
--**[Pygame](https://www.pygame.org/)**-Audioplayback
--**[Python](https://www.python.org/)**-Programminglanguage
+- **[MediaPipe](https://mediapipe.dev/)** - Hand detection and tracking
+- **[OpenCV](https://opencv.org/)** - Computer vision operations
+- **[TensorFlow Lite](https://www.tensorflow.org/lite)** - ML inference
+- **[OpenAI](https://openai.com/)** - Text-to-Speech API
+- **[Pygame](https://www.pygame.org/)** - Audio playback
+- **[Python](https://www.python.org/)** - Programming language
 
-###Inspiration&References
+### Inspiration & References
 
--MediaPipeHands:[GoogleAIBlog](https://ai.googleblog.com/2019/08/on-device-real-time-hand-tracking-with.html)
--SignLanguageDatasets:[WLASL](https://dxli94.github.io/WLASL/),[MS-ASL](https://www.microsoft.com/en-us/research/project/ms-asl/)
--TFLiteGestureRecognition:[Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
+- MediaPipe Hands: [Google AI Blog](https://ai.googleblog.com/2019/08/on-device-real-time-hand-tracking-with.html)
+- Sign Language Datasets: [WLASL](https://dxli94.github.io/WLASL/), [MS-ASL](https://www.microsoft.com/en-us/research/project/ms-asl/)
+- TFLite Gesture Recognition: [Kazuhito00/hand-gesture-recognition-using-mediapipe](https://github.com/Kazuhito00/hand-gesture-recognition-using-mediapipe)
 
-###Team
+### Team
 
--**ComputerVisionCourse**-AcademicProject
--**Contributors**-See[CONTRIBUTORS.md](CONTRIBUTORS.md)
-
----
-
-##Contact&Support
-
-###Issues&BugReports
-
-Ifyouencounteranyissues,please[openanissue](https://github.com/ihatesea69/Sign-Language-Recognition/issues)onGitHub.
-
-###Questions&Discussions
-
-Forquestionsanddiscussions,use[GitHubDiscussions](https://github.com/ihatesea69/Sign-Language-Recognition/discussions).
-
-###Documentation
-
--**FullDocumentation:**[docs/](docs/)
--**APIReference:**[docs/api/](docs/api/)
--**Tutorials:**[docs/tutorials/](docs/tutorials/)
+- **Computer Vision Course** - Academic Project
+- **Contributors** - See [CONTRIBUTORS.md](CONTRIBUTORS.md)
 
 ---
 
-##Roadmap
+##  Contact & Support
 
-###CurrentVersion(v1.0)
--Real-timehanddetection
--Rule-basedgesturerecognition
--TFLiteMLpipeline
--Text-to-Speechintegration
--BasicUI
+### Issues & Bug Reports
 
-###FutureEnhancements(v2.0)
--Two-handgesturesupport
--Sentenceformation
--Multi-languagesupport
--Mobileapp(iOS/Android)
--Web-basedinterface
--Clouddeployment
--Videorecording&playback
--Gesturecustomization
+If you encounter any issues, please [open an issue](https://github.com/ihatesea69/Sign-Language-Recognition/issues) on GitHub.
 
-###Long-termVision
--Communitygesturedatabase
--Real-timetranslation
--AR/VRintegration
--Accessibilityfeatures
+### Questions & Discussions
+
+For questions and discussions, use [GitHub Discussions](https://github.com/ihatesea69/Sign-Language-Recognition/discussions).
+
+### Documentation
+
+- **Full Documentation:** [docs/](docs/)
+- **API Reference:** [docs/api/](docs/api/)
+- **Tutorials:** [docs/tutorials/](docs/tutorials/)
 
 ---
 
-##Statistics
+## ️ Roadmap
+
+### Current Version (v1.0)
+- ✅ Real-time hand detection
+- ✅ Rule-based gesture recognition
+- ✅ TFLite ML pipeline
+- ✅ Text-to-Speech integration
+- ✅ Basic UI
+
+### Future Enhancements (v2.0)
+-  Two-hand gesture support
+-  Sentence formation
+-  Multi-language support
+-  Mobile app (iOS/Android)
+-  Web-based interface
+-  Cloud deployment
+-  Video recording & playback
+-  Gesture customization
+
+### Long-term Vision
+-  Community gesture database
+-  Real-time translation
+-  AR/VR integration
+-  Accessibility features
+
+---
+
+##  Statistics
 
 
 
@@ -659,14 +659,14 @@ Forquestionsanddiscussions,use[GitHubDiscussions](https://github.com/ihatesea69/
 
 ---
 
-<divalign="center">
+<div align="center">
 
-**Madewithforthedeafandhard-of-hearingcommunity**
+**Made with ❤️ for the deaf and hard-of-hearing community**
 
-**Starthisrepoifyoufindithelpful!**
+⭐ **Star this repo if you find it helpful!** ⭐
 
-[ReportBug](https://github.com/ihatesea69/Sign-Language-Recognition/issues)·
-[RequestFeature](https://github.com/ihatesea69/Sign-Language-Recognition/issues)·
+[Report Bug](https://github.com/ihatesea69/Sign-Language-Recognition/issues) · 
+[Request Feature](https://github.com/ihatesea69/Sign-Language-Recognition/issues) · 
 [Documentation](docs/)
 
 </div>
