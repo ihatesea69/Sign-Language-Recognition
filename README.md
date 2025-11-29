@@ -1,15 +1,17 @@
 #  Sign Language Recognition with Text-to-Speech
 
-
-
-
-
-
-
+[![Python](https://img.shields.io/badge/Python-3.8%2B-blue.svg)](https://www.python.org/downloads/)
+[![OpenCV](https://img.shields.io/badge/OpenCV-4.8%2B-green.svg)](https://opencv.org/)
+[![MediaPipe](https://img.shields.io/badge/MediaPipe-0.10%2B-orange.svg)](https://mediapipe.dev/)
+[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.13%2B-FF6F00.svg)](https://www.tensorflow.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active-success.svg)]()
 
 > **A real-time sign language recognition system with Text-to-Speech output, powered by MediaPipe and Machine Learning**
 
-
+<p align="center">
+  <img src="Demo_ComputerVision.gif" alt="Sign Language Recognition Demo" width="800"/>
+</p>
 
 ---
 
