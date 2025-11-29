@@ -77,41 +77,44 @@ class SignLanguageApp:
         else:
             print("⚠ Warning: OpenAI API key not found. TTS disabled.")
         
-        # Initialize camera - try multiple indices if first fails
+        # Initialize camera - use camera index 0 with Full HD resolution
         self.cap = None
-        camera_indices = [Config.CAMERA_INDEX, 0, 1, 2]  # Try configured, then 0, 1, 2
+        camera_index = 0  # Always use camera 0
         
-        for idx in camera_indices:
-            print(f"Trying camera index {idx}...")
-            cap_test = cv2.VideoCapture(idx)
-            if cap_test.isOpened():
-                # Test if we can actually read a frame
-                ret, frame = cap_test.read()
-                if ret and frame is not None:
-                    self.cap = cap_test
-                    Config.CAMERA_INDEX = idx
-                    print(f"✓ Successfully opened camera {idx}")
-                    break
-                else:
-                    cap_test.release()
-            else:
-                cap_test.release()
+        print(f"Opening camera index {camera_index}...")
+        self.cap = cv2.VideoCapture(camera_index)
         
-        if self.cap is None or not self.cap.isOpened():
-            print("\n✗ Error: Could not open any camera")
+        if not self.cap.isOpened():
+            print("\n✗ Error: Could not open camera 0")
             print("Troubleshooting:")
             print("  1. Make sure you're running in Windows PowerShell (not WSL)")
             print("  2. Check if camera is in use by another application")
             print("  3. Try running: python src/hand_detector.py")
             raise RuntimeError("Could not open camera")
         
-        # Set camera resolution
-        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, Config.CAMERA_WIDTH)
-        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, Config.CAMERA_HEIGHT)
+        # Test if we can read a frame
+        ret, frame = self.cap.read()
+        if not ret or frame is None:
+            self.cap.release()
+            raise RuntimeError("Camera opened but cannot read frames")
+        
+        print(f"✓ Successfully opened camera {camera_index}")
+        
+        # Set camera resolution to Full HD (1920x1080)
+        self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1920)
+        self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 1080)
+        
+        # Verify actual resolution
+        actual_width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        actual_height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        print(f"Camera resolution: {actual_width}x{actual_height}")
         
         # UI components
         self.fps_counter = FPSCounter()
         self.window_name = Config.WINDOW_NAME
+        
+        # Frame processing options
+        self.crop_to_square = False  # Set to True for square frame
         
         # Application state
         self.running = False
@@ -175,6 +178,7 @@ class SignLanguageApp:
             "BACKSPACE - Delete last",
             "C - Clear all",
             "P - Pause/Resume",
+            "S - Toggle Square Crop",
             "Q - Quit"
         ]
         
@@ -312,6 +316,18 @@ class SignLanguageApp:
         Returns:
             Processed frame
         """
+        # Crop to square if enabled
+        if self.crop_to_square:
+            h, w = img.shape[:2]
+            if w > h:
+                # Landscape - crop width
+                start_x = (w - h) // 2
+                img = img[:, start_x:start_x + h]
+            elif h > w:
+                # Portrait - crop height
+                start_y = (h - w) // 2
+                img = img[start_y:start_y + w, :]
+        
         # Detect hands
         img = self.detector.find_hands(img, draw=True)
         
@@ -392,6 +408,11 @@ class SignLanguageApp:
             self.paused = not self.paused
             print(f"{'PAUSED' if self.paused else 'RESUMED'}")
         
+        # S - toggle square crop
+        elif key == ord('s') or key == ord('S'):
+            self.crop_to_square = not self.crop_to_square
+            print(f"Square crop: {'ON' if self.crop_to_square else 'OFF'}")
+        
         # Add detected letter to text
         if self.current_gesture and len(self.current_gesture) == 1:
             if self.current_confidence >= Config.GESTURE_CONFIDENCE_THRESHOLD:
@@ -413,6 +434,7 @@ class SignLanguageApp:
         print("  - Press ENTER to speak the accumulated text")
         print("  - Press C to clear text")
         print("  - Press P to pause/resume")
+        print("  - Press S to toggle square crop")
         print("  - Press Q to quit")
         if self.use_tflite:
             print("  - Press K to log keypoints, H for point history")
